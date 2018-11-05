@@ -43,7 +43,7 @@ var WIDTH = SIZE*(map_w+2);
 var HEIGHT = SIZE*(map_h+2);
 var PLAYER = 'image/player1.png';
 var TILE = "image/tile1.png";
-
+var PAD = "image/pad-up.png";
 function main(){
   //--------------------------------------------------------------
   //ステージ作成
@@ -66,9 +66,9 @@ function main(){
       }
     }
   }
-  game = new Game(WIDTH,HEIGHT);
+  game = new Game(WIDTH,HEIGHT + SIZE * 4);
   game.fps = 7;
-  game.preload(PLAYER,TILE);
+  game.preload(PLAYER,TILE,PAD);
   game.rootScene.backgroundColor = 'black';
   game.onload = function(){
     Main = new Scene();
@@ -188,11 +188,66 @@ function main(){
     player = new Player(1,1);
     stage.addChild(player);
     //-------------------------------------------------------------
-    //Pad作成
+    // Controller作成
     //-------------------------------------------------------------
-    //バーチャルキッドを生成
-    //var pad = new virtualPad();
-    //Main.addChild(pad);
+    var pad = new Array(4);
+    for (i = 0; i < 4; i++ ) {
+      pad[i] = new Sprite(SIZE * 1.5, SIZE * 1.4);
+      if(i==0) {
+        pad[i].x = WIDTH - 6 * SIZE;
+        pad[i].y = HEIGHT + SIZE;
+      } else if (i == 1) {
+        pad[i].x = WIDTH - 5.14 * SIZE;
+        pad[i].y = HEIGHT + SIZE * 1.78;
+        pad[i].rotate(90);
+      } else if (i == 2) {
+        pad[i].x = WIDTH - 6.04 * SIZE;
+        pad[i].y = HEIGHT + SIZE * 2.53;
+        pad[i].rotate(180);
+      } else if (i == 3) {
+        pad[i].x = WIDTH - 6.9 * SIZE;
+        pad[i].y = HEIGHT + SIZE * 1.72;
+        pad[i].rotate(-90);
+      }
+      pad[i].image = game.assets[PAD];
+      Main.addChild(pad[i]);
+    }
+    pad[0].addEventListener("touchstart", () => {
+      if(player.keycount <= 0){
+        if(player.y>0+SIZE){
+          player.keycount = 2;player.y-=SIZE;player.hp--;player.route[player.count]=control.UP;player.count++;
+        }
+      }else if(player.keycount > 0){
+        player.keycount--;
+      }
+    });
+    pad[1].addEventListener("touchstart", () => {
+      if(player.keycount <= 0){
+        if(player.x<=WIDTH-SIZE*3){
+          player.keycount = 2;player.x+=SIZE;player.hp--;player.route[player.count]=control.RIGHT;player.count++;
+        }
+      }else if(player.keycount > 0){
+        player.keycount--;
+      }
+    });
+    pad[2].addEventListener("touchstart", () => {
+      if(player.keycount <= 0){
+        if(player.y<=WIDTH-SIZE*3){
+          player.keycount = 2;player.y+=SIZE;player.hp--;player.route[player.count]=control.DOWN;player.count++;
+        }
+      }else if(player.keycount > 0){
+        player.keycount--;
+      }
+    });
+    pad[3].addEventListener("touchstart", () => {
+      if(player.keycount <= 0){
+        if(player.x>0+SIZE){
+          player.keycount = 2;player.x-=SIZE;player.hp--;player.route[player.count]=control.LEFT;player.count++;
+        }
+      }else if(player.keycount > 0){
+        player.keycount--;
+      }
+    });
     //-------------------------------------------------------------
     //answer作成
     //-------------------------------------------------------------
